@@ -17,10 +17,9 @@
 #[macro_use]
 extern crate serde;
 
-#[cfg_attr(rustfmt, rustfmt_skip)]
 use std::error::Error;
-#[cfg_attr(rustfmt, rustfmt_skip)]
 use std::fmt::{Display, Formatter, Result};
+use std::ops::{Deref, DerefMut};
 
 macro_rules! impl_sum {
 	(@into_inner $name:ident : $($t:ident)* : !) => (
@@ -79,56 +78,128 @@ macro_rules! impl_sum {
 			}
 		}
 		impl_sum!(@into_inner $name : $($t)* : $first_a $($a)*);
-		impl<$($t:AsRef<Target>,)* Target> AsRef<Target> for $name<$($t,)*> {
+		impl<$($t,)* Target> AsRef<Target> for $name<$($t,)*>
+		where
+			$($t: AsRef<Target>,)*
+		{
 			fn as_ref(&self) -> &Target {
 				match *self {
 					$($name::$t(ref inner) => inner.as_ref(),)*
 				}
 			}
 		}
-		impl<$($t:AsMut<Target>,)* Target> AsMut<Target> for $name<$($t,)*> {
+		impl<$($t,)* Target> AsMut<Target> for $name<$($t,)*>
+		where
+			$($t: AsMut<Target>,)*
+		{
 			fn as_mut(&mut self) -> &mut Target {
 				match *self {
 					$($name::$t(ref mut inner) => inner.as_mut(),)*
 				}
 			}
 		}
-		// TODO
-		// impl<$($t:Deref,)*> Deref for $name<$($t,)*>
-		// 	where $($t: Deref<Target=A::Target>,)*
-		// {
-		// 	type Target = A::Target;
-		// 	fn deref(&self) -> &Self::Target {
-		// 		match *self {
-		// 			$($name::$t(ref inner) => &*inner,)*
-		// 		}
-		// 	}
-		// }
-		// impl<$($t:DerefMut,)*> DerefMut for $name<$($t,)*>
-		// 	where $($t: DerefMut<Target=A::Target>,)*
-		// {
-		// 	fn deref_mut(&mut self) -> &mut Self::Target {
-		// 		match *self {
-		// 			$($name::$t(ref mut inner) => &mut *inner,)*
-		// 		}
-		// 	}
-		// }
-		impl<$($t:Error,)*> Error for $name<$($t,)*> {
+		impl<$($t,)*> Error for $name<$($t,)*>
+		where
+			$($t: Error,)*
+		{
 			fn description(&self) -> &str {
 				match *self {
 					$($name::$t(ref inner) => inner.description(),)*
 				}
 			}
+			#[allow(deprecated)]
 			fn cause(&self) -> Option<&Error> {
 				match *self {
 					$($name::$t(ref inner) => inner.cause(),)*
 				}
 			}
+			// fn source(&self) -> Option<&(Error + 'static)> {
+			// 	match *self {
+			// 		$($name::$t(ref inner) => inner.source(),)*
+			// 	}
+			// }
 		}
-		impl<$($t:Display,)*> Display for $name<$($t,)*> {
+		impl<$($t,)*> Display for $name<$($t,)*>
+		where
+			$($t: Display,)*
+		{
 			fn fmt(&self, f: &mut Formatter) -> Result {
 				match *self {
 					$($name::$t(ref inner) => inner.fmt(f),)*
+				}
+			}
+		}
+		impl_sum!(@multi $name : $($t $is $map $get)* : $first_a $($a)*);
+	);
+	(@multi $name:ident : : $first_a:tt $($a:ident)* ) => ();
+	(@multi $name:ident : $first_t:ident $first_is:ident $first_map:ident $first_get:ident $($t:ident $is:ident $map:ident $get:ident)* : $first_a:tt $($a:ident)* ) => (
+		impl<$first_t, $($t,)*> Deref for $name<$first_t, $($t,)*>
+		where
+			$first_t: Deref,
+			$($t: Deref<Target = $first_t::Target>,)*
+		{
+			type Target = $first_t::Target;
+			fn deref(&self) -> &Self::Target {
+				match *self {
+					$name::$first_t(ref inner) => &*inner,
+					$($name::$t(ref inner) => &*inner,)*
+				}
+			}
+		}
+		impl<$first_t, $($t,)*> DerefMut for $name<$first_t, $($t,)*>
+		where
+			$first_t: DerefMut,
+			$($t: DerefMut<Target = $first_t::Target>,)*
+		{
+			fn deref_mut(&mut self) -> &mut Self::Target {
+				match *self {
+					$name::$first_t(ref mut inner) => &mut *inner,
+					$($name::$t(ref mut inner) => &mut *inner,)*
+				}
+			}
+		}
+
+		impl<$first_t, $($t,)*> Iterator for $name<$first_t, $($t,)*>
+		where
+			$first_t: Iterator,
+			$($t: Iterator<Item = $first_t::Item>,)*
+		{
+			type Item = <$first_t>::Item;
+
+			fn next(&mut self) -> Option<Self::Item> {
+				match *self {
+					$name::$first_t(ref mut inner) => inner.next(),
+					$($name::$t(ref mut inner) => inner.next(),)*
+				}
+			}
+			fn size_hint(&self) -> (usize, Option<usize>) {
+				match *self {
+					$name::$first_t(ref inner) => inner.size_hint(),
+					$($name::$t(ref inner) => inner.size_hint(),)*
+				}
+			}
+		}
+		impl<$first_t, $($t,)*> DoubleEndedIterator for $name<$first_t, $($t,)*>
+		where
+			$first_t: DoubleEndedIterator,
+			$($t: DoubleEndedIterator<Item = $first_t::Item>,)*
+		{
+			fn next_back(&mut self) -> Option<Self::Item> {
+				match *self {
+					$name::$first_t(ref mut inner) => inner.next_back(),
+					$($name::$t(ref mut inner) => inner.next_back(),)*
+				}
+			}
+		}
+		impl<$first_t, $($t,)*> ExactSizeIterator for $name<$first_t, $($t,)*>
+		where
+			$first_t: ExactSizeIterator,
+			$($t: ExactSizeIterator<Item = $first_t::Item>,)*
+		{
+			fn len(&self) -> usize {
+				match *self {
+					$name::$first_t(ref inner) => inner.len(),
+					$($name::$t(ref inner) => inner.len(),)*
 				}
 			}
 		}
