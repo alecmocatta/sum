@@ -172,6 +172,12 @@ macro_rules! impl_sum {
 					$($name::$t(ref mut inner) => inner.next(),)*
 				}
 			}
+			fn size_hint(&self) -> (usize, Option<usize>) {
+				match *self {
+					$name::$first_t(ref inner) => inner.size_hint(),
+					$($name::$t(ref inner) => inner.size_hint(),)*
+				}
+			}
 		}
 		impl<$first_t, $($t,)*> DoubleEndedIterator for $name<$first_t, $($t,)*>
 		where
