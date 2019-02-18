@@ -6,7 +6,7 @@
 //!
 //! \* Over up to 32 types.
 
-#![doc(html_root_url = "https://docs.rs/sum/0.1.2")]
+#![doc(html_root_url = "https://docs.rs/sum/0.1.3")]
 #![allow(unused_variables, unreachable_patterns)]
 #![cfg_attr(
 	feature = "cargo-clippy",

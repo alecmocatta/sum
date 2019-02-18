@@ -4,7 +4,7 @@
 [![MIT / Apache 2.0 licensed](https://img.shields.io/crates/l/sum.svg?maxAge=2592000)](#License)
 [![Build Status](https://travis-ci.com/alecmocatta/sum.svg?branch=master)](https://travis-ci.com/alecmocatta/sum)
 
-[Docs](https://docs.rs/sum/0.1.2)
+[Docs](https://docs.rs/sum/0.1.3)
 
 General-purpose sum types.
 
