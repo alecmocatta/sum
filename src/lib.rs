@@ -10,7 +10,12 @@
 #![allow(unused_variables, unreachable_patterns)]
 #![cfg_attr(
 	feature = "cargo-clippy",
-	allow(renamed_and_removed_lints, type_complexity, deprecated_cfg_attr)
+	allow(
+		renamed_and_removed_lints,
+		type_complexity,
+		deprecated_cfg_attr,
+		match_ref_pats
+	)
 )]
 
 #[cfg(feature = "serde")]
