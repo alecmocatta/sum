@@ -250,7 +250,7 @@ macro_rules! sum2 {
         $(mut fn $mut_fn:ident(&mut self $(, $mut_arg:ident : $mut_arg_ty:ty)*) -> $mut_ret:ty;)*
         $(fn $ref_fn:ident(&self $(, $ref_arg:ident : $ref_arg_ty:ty)*) -> $ref_ret:ty;)*
     }) => (
-        impl<A, B, $($t,)*> $trait<$($t,)*> for Sum2<A, B>
+        impl<A, B, $($t,)*> $trait<$($t,)*> for $crate::Sum2<A, B>
         where
             A: $trait<$($t,)*>,
             B: $trait<$($t,)* $($assoc = A::$assoc,)*>,
@@ -261,8 +261,8 @@ macro_rules! sum2 {
             #[inline]
             fn $mut_fn(&mut self $(, $mut_arg : $mut_arg_ty)*) -> $mut_ret {
                 match self {
-                    Sum2::A(ref mut self_) => self_.$mut_fn($($mut_arg),*),
-                    Sum2::B(ref mut self_) => self_.$mut_fn($($mut_arg),*),
+                    $crate::Sum2::A(ref mut self_) => self_.$mut_fn($($mut_arg),*),
+                    $crate::Sum2::B(ref mut self_) => self_.$mut_fn($($mut_arg),*),
                 }
             }
             )*
@@ -271,8 +271,8 @@ macro_rules! sum2 {
             #[inline]
             fn $ref_fn(&self $(, $ref_arg : $ref_arg_ty)*) -> $ref_ret {
                 match self {
-                    Sum2::A(ref self_) => self_.$ref_fn($($ref_arg),*),
-                    Sum2::B(ref self_) => self_.$ref_fn($($ref_arg),*),
+                    $crate::Sum2::A(ref self_) => self_.$ref_fn($($ref_arg),*),
+                    $crate::Sum2::B(ref self_) => self_.$ref_fn($($ref_arg),*),
                 }
             }
             )*
@@ -287,7 +287,7 @@ macro_rules! sum3 {
         $(mut fn $mut_fn:ident(&mut self $(, $mut_arg:ident : $mut_arg_ty:ty)*) -> $mut_ret:ty;)*
         $(fn $ref_fn:ident(&self $(, $ref_arg:ident : $ref_arg_ty:ty)*) -> $ref_ret:ty;)*
     }) => (
-        impl<A, B, C, $($t,)*> $trait<$($t,)*> for Sum3<A, B, C>
+        impl<A, B, C, $($t,)*> $trait<$($t,)*> for $crate::Sum3<A, B, C>
         where
             A: $trait<$($t,)*>,
             B: $trait<$($t,)* $($assoc = A::$assoc,)*>,
@@ -299,9 +299,9 @@ macro_rules! sum3 {
             #[inline]
             fn $mut_fn(&mut self $(, $mut_arg : $mut_arg_ty)*) -> $mut_ret {
                 match self {
-                    Sum3::A(ref mut self_) => self_.$mut_fn($($mut_arg),*),
-                    Sum3::B(ref mut self_) => self_.$mut_fn($($mut_arg),*),
-                    Sum3::C(ref mut self_) => self_.$mut_fn($($mut_arg),*),
+                    $crate::Sum3::A(ref mut self_) => self_.$mut_fn($($mut_arg),*),
+                    $crate::Sum3::B(ref mut self_) => self_.$mut_fn($($mut_arg),*),
+                    $crate::Sum3::C(ref mut self_) => self_.$mut_fn($($mut_arg),*),
                 }
             }
             )*
@@ -310,9 +310,9 @@ macro_rules! sum3 {
             #[inline]
             fn $ref_fn(&self $(, $ref_arg : $ref_arg_ty)*) -> $ref_ret {
                 match self {
-                    Sum3::A(ref self_) => self_.$ref_fn($($ref_arg),*),
-                    Sum3::B(ref self_) => self_.$ref_fn($($ref_arg),*),
-                    Sum3::C(ref self_) => self_.$ref_fn($($ref_arg),*),
+                    $crate::Sum3::A(ref self_) => self_.$ref_fn($($ref_arg),*),
+                    $crate::Sum3::B(ref self_) => self_.$ref_fn($($ref_arg),*),
+                    $crate::Sum3::C(ref self_) => self_.$ref_fn($($ref_arg),*),
                 }
             }
             )*
