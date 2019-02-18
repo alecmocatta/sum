@@ -10,7 +10,12 @@
 #![allow(unused_variables, unreachable_patterns)]
 #![cfg_attr(
 	feature = "cargo-clippy",
-	allow(renamed_and_removed_lints, type_complexity, deprecated_cfg_attr)
+	allow(
+		renamed_and_removed_lints,
+		type_complexity,
+		deprecated_cfg_attr,
+		match_ref_pats
+	)
 )]
 
 #[cfg(feature = "serde")]
@@ -242,6 +247,129 @@ impl_sum!(Sum30: A is_a map_a a B is_b map_b b C is_c map_c c D is_d map_d d E i
 impl_sum!(Sum31: A is_a map_a a B is_b map_b b C is_c map_c c D is_d map_d d E is_e map_e e F is_f map_f f G is_g map_g g H is_h map_h h I is_i map_i i J is_j map_j j K is_k map_k k L is_l map_l l M is_m map_m m N is_n map_n n O is_o map_o o P is_p map_p p Q is_q map_q q R is_r map_r r S is_s map_s s T is_t map_t t U is_u map_u u V is_v map_v v W is_w map_w w X is_x map_x x Y is_y map_y y Z is_z map_z z Aa is_aa map_aa aa Ab is_ab map_ab ab Ac is_ac map_ac ac Ad is_ad map_ad ad Ae is_ae map_ae ae: A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A);
 impl_sum!(Sum32: A is_a map_a a B is_b map_b b C is_c map_c c D is_d map_d d E is_e map_e e F is_f map_f f G is_g map_g g H is_h map_h h I is_i map_i i J is_j map_j j K is_k map_k k L is_l map_l l M is_m map_m m N is_n map_n n O is_o map_o o P is_p map_p p Q is_q map_q q R is_r map_r r S is_s map_s s T is_t map_t t U is_u map_u u V is_v map_v v W is_w map_w w X is_x map_x x Y is_y map_y y Z is_z map_z z Aa is_aa map_aa aa Ab is_ab map_ab ab Ac is_ac map_ac ac Ad is_ad map_ad ad Ae is_ae map_ae ae Af is_af map_af af: A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A);
 
+#[doc(hidden)]
+#[macro_export]
+macro_rules! sum2 {
+    (impl<$($t:ident),*> $trait:ident <$($p:ty),*> for Sum where {
+        $(type $assoc:ident;)*
+        $(mut fn $mut_fn:ident(&mut self $(, $mut_arg:ident : $mut_arg_ty:ty)*) -> $mut_ret:ty;)*
+        $(fn $ref_fn:ident(&self $(, $ref_arg:ident : $ref_arg_ty:ty)*) -> $ref_ret:ty;)*
+    }) => (
+        impl<A, B, $($t,)*> $trait<$($t,)*> for $crate::Sum2<A, B>
+        where
+            A: $trait<$($t,)*>,
+            B: $trait<$($t,)* $($assoc = A::$assoc,)*>,
+        {
+            $(type $assoc = A::$assoc;)*
+
+            $(
+            #[inline]
+            fn $mut_fn(&mut self $(, $mut_arg : $mut_arg_ty)*) -> $mut_ret {
+                match self {
+                    &mut $crate::Sum2::A(ref mut self_) => self_.$mut_fn($($mut_arg),*),
+                    &mut $crate::Sum2::B(ref mut self_) => self_.$mut_fn($($mut_arg),*),
+                }
+            }
+            )*
+
+            $(
+            #[inline]
+            fn $ref_fn(&self $(, $ref_arg : $ref_arg_ty)*) -> $ref_ret {
+                match self {
+                    &$crate::Sum2::A(ref self_) => self_.$ref_fn($($ref_arg),*),
+                    &$crate::Sum2::B(ref self_) => self_.$ref_fn($($ref_arg),*),
+                }
+            }
+            )*
+        }
+    )
+}
+#[doc(hidden)]
+#[macro_export]
+macro_rules! sum3 {
+    (impl<$($t:ident),*> $trait:ident <$($p:ty),*> for Sum where {
+        $(type $assoc:ident;)*
+        $(mut fn $mut_fn:ident(&mut self $(, $mut_arg:ident : $mut_arg_ty:ty)*) -> $mut_ret:ty;)*
+        $(fn $ref_fn:ident(&self $(, $ref_arg:ident : $ref_arg_ty:ty)*) -> $ref_ret:ty;)*
+    }) => (
+        impl<A, B, C, $($t,)*> $trait<$($t,)*> for $crate::Sum3<A, B, C>
+        where
+            A: $trait<$($t,)*>,
+            B: $trait<$($t,)* $($assoc = A::$assoc,)*>,
+            C: $trait<$($t,)* $($assoc = A::$assoc,)*>,
+        {
+            $(type $assoc = A::$assoc;)*
+
+            $(
+            #[inline]
+            fn $mut_fn(&mut self $(, $mut_arg : $mut_arg_ty)*) -> $mut_ret {
+                match self {
+                    &mut $crate::Sum3::A(ref mut self_) => self_.$mut_fn($($mut_arg),*),
+                    &mut $crate::Sum3::B(ref mut self_) => self_.$mut_fn($($mut_arg),*),
+                    &mut $crate::Sum3::C(ref mut self_) => self_.$mut_fn($($mut_arg),*),
+                }
+            }
+            )*
+
+            $(
+            #[inline]
+            fn $ref_fn(&self $(, $ref_arg : $ref_arg_ty)*) -> $ref_ret {
+                match self {
+                    &$crate::Sum3::A(ref self_) => self_.$ref_fn($($ref_arg),*),
+                    &$crate::Sum3::B(ref self_) => self_.$ref_fn($($ref_arg),*),
+                    &$crate::Sum3::C(ref self_) => self_.$ref_fn($($ref_arg),*),
+                }
+            }
+            )*
+        }
+    )
+}
+
+#[doc(hidden)]
+#[macro_export(local_inner_macros)]
+macro_rules! derive_sum {
+    (impl<$($t:ident),*> $trait:ident <$($p:ty),*> for Sum where {
+        $(type $assoc:ident;)*
+        $(mut fn $mut_fn:ident(&mut self $(, $mut_arg:ident : $mut_arg_ty:ty)*) -> $mut_ret:ty;)*
+        $(fn $ref_fn:ident(&self $(, $ref_arg:ident : $ref_arg_ty:ty)*) -> $ref_ret:ty;)*
+    }) => (
+        sum2!(
+            impl<$($t),*> $trait <$($p),*> for Sum where {
+                $(type $assoc;)*
+                $(mut fn $mut_fn(&mut self $(, $mut_arg : $mut_arg_ty)*) -> $mut_ret;)*
+                $(fn $ref_fn(&self $(, $ref_arg : $ref_arg_ty)*) -> $ref_ret;)*
+            }
+        );
+        sum3!(
+            impl<$($t),*> $trait <$($p),*> for Sum where {
+                $(type $assoc;)*
+                $(mut fn $mut_fn(&mut self $(, $mut_arg : $mut_arg_ty)*) -> $mut_ret;)*
+                $(fn $ref_fn(&self $(, $ref_arg : $ref_arg_ty)*) -> $ref_ret;)*
+            }
+        );
+    );
+    (impl $trait:ident for Sum {
+        $(type $assoc:ident;)*
+        $(mut fn $mut_fn:ident(&mut self $(, $mut_arg:ident : $mut_arg_ty:ty)*) -> $mut_ret:ty;)*
+        $(fn $ref_fn:ident(&self $(, $ref_arg:ident : $ref_arg_ty:ty)*) -> $ref_ret:ty;)*
+    }) => (
+        sum2!(
+            impl<> $trait <> for Sum where {
+                $(type $assoc;)*
+                $(mut fn $mut_fn(&mut self $(, $mut_arg : $mut_arg_ty)*) -> $mut_ret;)*
+                $(fn $ref_fn(&self $(, $ref_arg : $ref_arg_ty)*) -> $ref_ret;)*
+            }
+        );
+        sum3!(
+            impl<> $trait <> for Sum where {
+                $(type $assoc;)*
+                $(mut fn $mut_fn(&mut self $(, $mut_arg : $mut_arg_ty)*) -> $mut_ret;)*
+                $(fn $ref_fn(&self $(, $ref_arg : $ref_arg_ty)*) -> $ref_ret;)*
+            }
+        );
+    );
+}
+
 #[test]
 fn basic() {
 	let mut e = Sum2::A(2);
@@ -253,4 +381,13 @@ fn basic() {
 	assert_eq!(e.b(), Some(2));
 	assert_eq!(e.as_ref().b(), Some(&2));
 	assert_eq!(e.as_mut().b(), Some(&mut 2));
+
+	trait Abc {
+		fn abc(&self);
+		fn def(&mut self);
+	}
+	derive_sum!(impl Abc for Sum {
+		mut fn def(&mut self) -> ();
+		fn abc(&self) -> ();
+	});
 }
