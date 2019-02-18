@@ -322,7 +322,7 @@ macro_rules! sum3 {
 
 #[doc(hidden)]
 #[macro_export(local_inner_macros)]
-macro_rules! sum {
+macro_rules! derive_sum {
     (impl<$($t:ident),*> $trait:ident <$($p:ty),*> for Sum where {
         $(type $assoc:ident;)*
         $(mut fn $mut_fn:ident(&mut self $(, $mut_arg:ident : $mut_arg_ty:ty)*) -> $mut_ret:ty;)*
@@ -381,7 +381,7 @@ fn basic() {
 		fn abc(&self);
 		fn def(&mut self);
 	}
-	sum!(impl Abc for Sum {
+	derive_sum!(impl Abc for Sum {
 		mut fn def(&mut self) -> ();
 		fn abc(&self) -> ();
 	});
