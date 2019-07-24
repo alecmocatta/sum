@@ -7,14 +7,28 @@
 //! \* Over up to 32 types.
 
 #![doc(html_root_url = "https://docs.rs/sum/0.1.3")]
+#![warn(
+	missing_copy_implementations,
+	missing_debug_implementations,
+	// missing_docs,
+	trivial_casts,
+	trivial_numeric_casts,
+	unused_import_braces,
+	unused_qualifications,
+	unused_results
+)] // from https://github.com/rust-unofficial/patterns/blob/master/anti_patterns/deny-warnings.md
 #![allow(unused_variables, unreachable_patterns)]
+#![cfg_attr(feature = "cargo-clippy", allow(renamed_and_removed_lints))]
+#![cfg_attr(feature = "cargo-clippy", warn(pedantic))]
 #![cfg_attr(
 	feature = "cargo-clippy",
 	allow(
-		renamed_and_removed_lints,
+		use_self,
 		type_complexity,
 		deprecated_cfg_attr,
-		match_ref_pats
+		match_ref_pats,
+		empty_enum,
+		bare_trait_objects
 	)
 )]
 
@@ -381,7 +395,10 @@ fn basic() {
 	assert_eq!(e.b(), Some(2));
 	assert_eq!(e.as_ref().b(), Some(&2));
 	assert_eq!(e.as_mut().b(), Some(&mut 2));
+}
 
+#[test]
+fn derive() {
 	trait Abc {
 		fn abc(&self);
 		fn def(&mut self);
