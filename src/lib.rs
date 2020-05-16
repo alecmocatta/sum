@@ -15,30 +15,24 @@
 	trivial_numeric_casts,
 	unused_import_braces,
 	unused_qualifications,
-	unused_results
+	unused_results,
+	clippy::pedantic
 )] // from https://github.com/rust-unofficial/patterns/blob/master/anti_patterns/deny-warnings.md
 #![allow(unused_variables, unreachable_patterns)]
-#![cfg_attr(feature = "cargo-clippy", allow(renamed_and_removed_lints))]
-#![cfg_attr(feature = "cargo-clippy", warn(pedantic))]
-#![cfg_attr(
-	feature = "cargo-clippy",
-	allow(
-		use_self,
-		type_complexity,
-		deprecated_cfg_attr,
-		match_ref_pats,
-		empty_enum,
-		bare_trait_objects
-	)
+#![allow(
+	clippy::empty_enum,
+	clippy::type_complexity,
+	clippy::wrong_self_convention,
+	clippy::must_use_candidate,
+	clippy::unsafe_derive_deserialize
 )]
 
 #[cfg(feature = "serde")]
-#[macro_use]
-extern crate serde;
+use serde::{Deserialize, Serialize};
 
-use std::error::Error;
-use std::fmt::{Display, Formatter, Result};
-use std::ops::{Deref, DerefMut};
+use std::{
+	error::Error, fmt::{Display, Formatter, Result}, hint::unreachable_unchecked, ops::{Deref, DerefMut}, pin::Pin
+};
 
 macro_rules! impl_sum {
 	(@into_inner $name:ident : $($t:ident)* : !) => (
@@ -95,6 +89,22 @@ macro_rules! impl_sum {
 					$($name::$t(ref mut a) => $name::$t(a),)*
 				}
 			}
+			pub fn as_pin_ref<'a>(self: Pin<&'a Self>) -> $name<$(Pin<&'a $t>,)*> {
+				unsafe {
+					match self.get_ref() {
+						$($name::$t(a) => $name::$t(Pin::new_unchecked(a)),)*
+						_ => unreachable_unchecked(),
+					}
+				}
+			}
+			pub fn as_pin_mut<'a>(self: Pin<&'a mut Self>) -> $name<$(Pin<&'a mut $t>,)*> {
+				unsafe {
+					match self.get_unchecked_mut() {
+						$($name::$t(a) => $name::$t(Pin::new_unchecked(a)),)*
+						_ => unreachable_unchecked(),
+					}
+				}
+			}
 		}
 		impl_sum!(@into_inner $name : $($t)* : $first_a $($a)*);
 		impl<$($t,)* Target> AsRef<Target> for $name<$($t,)*>
@@ -121,22 +131,23 @@ macro_rules! impl_sum {
 		where
 			$($t: Error,)*
 		{
+			#[allow(deprecated)]
 			fn description(&self) -> &str {
 				match *self {
 					$($name::$t(ref inner) => inner.description(),)*
 				}
 			}
 			#[allow(deprecated)]
-			fn cause(&self) -> Option<&Error> {
+			fn cause(&self) -> Option<&dyn Error> {
 				match *self {
 					$($name::$t(ref inner) => inner.cause(),)*
 				}
 			}
-			// fn source(&self) -> Option<&(Error + 'static)> {
-			// 	match *self {
-			// 		$($name::$t(ref inner) => inner.source(),)*
-			// 	}
-			// }
+			fn source(&self) -> Option<&(dyn Error + 'static)> {
+				match *self {
+					$($name::$t(ref inner) => inner.source(),)*
+				}
+			}
 		}
 		impl<$($t,)*> Display for $name<$($t,)*>
 		where

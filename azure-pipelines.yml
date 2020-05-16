@@ -13,7 +13,7 @@ jobs:
   parameters:
     endpoint: alecmocatta
     default:
-      rust_toolchain: 1.25.0 stable beta nightly
+      rust_toolchain: 1.33.0 stable beta nightly
       rust_lint_toolchain: nightly-2019-07-19
       rust_flags: ''
       rust_features: ';all'
