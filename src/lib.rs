@@ -1,12 +1,14 @@
 //! General-purpose sum types.
 //!
-//! **[Crates.io](https://crates.io/crates/sum) │ [Repo](https://github.com/alecmocatta/sum)**
+//! <p style="font-family: 'Fira Sans',sans-serif;padding:0.3em 0"><strong>
+//! <a href="https://crates.io/crates/sum">📦&nbsp;&nbsp;Crates.io</a>&nbsp;&nbsp;│&nbsp;&nbsp;<a href="https://github.com/alecmocatta/sum">📑&nbsp;&nbsp;GitHub</a>&nbsp;&nbsp;│&nbsp;&nbsp;<a href="https://constellation.zulipchat.com/#narrow/stream/213236-subprojects">💬&nbsp;&nbsp;Chat</a>
+//! </strong></p>
 //!
 //! Arbitrarily-sized product types exist in Rust in the form of [tuples](https://doc.rust-lang.org/std/primitive.tuple.html). This is a generalisation of bluss's [Either](https://docs.rs/either/1.5.0/either/enum.Either.html) type to provide **arbitrarily-sized sum types**\*.
 //!
 //! \* Over up to 32 types.
 
-#![doc(html_root_url = "https://docs.rs/sum/0.1.3")]
+#![doc(html_root_url = "https://docs.rs/sum/0.1.4")]
 #![warn(
 	missing_copy_implementations,
 	missing_debug_implementations,
