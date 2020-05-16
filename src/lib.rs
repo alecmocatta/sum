@@ -293,8 +293,8 @@ macro_rules! sum2 {
             #[inline]
             fn $mut_fn(&mut self $(, $mut_arg : $mut_arg_ty)*) -> $mut_ret {
                 match self {
-                    &mut $crate::Sum2::A(ref mut self_) => self_.$mut_fn($($mut_arg),*),
-                    &mut $crate::Sum2::B(ref mut self_) => self_.$mut_fn($($mut_arg),*),
+                    $crate::Sum2::A(self_) => self_.$mut_fn($($mut_arg),*),
+                    $crate::Sum2::B(self_) => self_.$mut_fn($($mut_arg),*),
                 }
             }
             )*
@@ -303,8 +303,8 @@ macro_rules! sum2 {
             #[inline]
             fn $ref_fn(&self $(, $ref_arg : $ref_arg_ty)*) -> $ref_ret {
                 match self {
-                    &$crate::Sum2::A(ref self_) => self_.$ref_fn($($ref_arg),*),
-                    &$crate::Sum2::B(ref self_) => self_.$ref_fn($($ref_arg),*),
+                    $crate::Sum2::A(self_) => self_.$ref_fn($($ref_arg),*),
+                    $crate::Sum2::B(self_) => self_.$ref_fn($($ref_arg),*),
                 }
             }
             )*
@@ -331,9 +331,9 @@ macro_rules! sum3 {
             #[inline]
             fn $mut_fn(&mut self $(, $mut_arg : $mut_arg_ty)*) -> $mut_ret {
                 match self {
-                    &mut $crate::Sum3::A(ref mut self_) => self_.$mut_fn($($mut_arg),*),
-                    &mut $crate::Sum3::B(ref mut self_) => self_.$mut_fn($($mut_arg),*),
-                    &mut $crate::Sum3::C(ref mut self_) => self_.$mut_fn($($mut_arg),*),
+                    $crate::Sum3::A(self_) => self_.$mut_fn($($mut_arg),*),
+                    $crate::Sum3::B(self_) => self_.$mut_fn($($mut_arg),*),
+                    $crate::Sum3::C(self_) => self_.$mut_fn($($mut_arg),*),
                 }
             }
             )*
@@ -342,9 +342,9 @@ macro_rules! sum3 {
             #[inline]
             fn $ref_fn(&self $(, $ref_arg : $ref_arg_ty)*) -> $ref_ret {
                 match self {
-                    &$crate::Sum3::A(ref self_) => self_.$ref_fn($($ref_arg),*),
-                    &$crate::Sum3::B(ref self_) => self_.$ref_fn($($ref_arg),*),
-                    &$crate::Sum3::C(ref self_) => self_.$ref_fn($($ref_arg),*),
+                    $crate::Sum3::A(self_) => self_.$ref_fn($($ref_arg),*),
+                    $crate::Sum3::B(self_) => self_.$ref_fn($($ref_arg),*),
+                    $crate::Sum3::C(self_) => self_.$ref_fn($($ref_arg),*),
                 }
             }
             )*
