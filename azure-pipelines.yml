@@ -14,7 +14,7 @@ jobs:
     endpoint: alecmocatta
     default:
       rust_toolchain: 1.33.0 stable beta nightly
-      rust_lint_toolchain: nightly-2020-05-09
+      rust_lint_toolchain: nightly-2020-07-04
       rust_flags: ''
       rust_features: ';all'
       rust_target_check: ''

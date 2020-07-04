@@ -1,6 +1,6 @@
 [package]
 name = "sum"
-version = "0.1.4"
+version = "0.1.5"
 license = "MIT OR Apache-2.0"
 authors = ["Alec Mocatta <alec@mocatta.net>"]
 categories = ["data-structures"]
@@ -10,12 +10,12 @@ General-purpose sum types.
 """
 repository = "https://github.com/alecmocatta/sum"
 homepage = "https://github.com/alecmocatta/sum"
-documentation = "https://docs.rs/sum/0.1.4"
+documentation = "https://docs.rs/sum/0.1"
 readme = "README.md"
 edition = "2018"
 
 [badges]
-azure-devops = { project = "alecmocatta/sum", pipeline = "tests" }
+azure-devops = { project = "alecmocatta/sum", pipeline = "tests", build = "12" }
 maintenance = { status = "actively-developed" }
 
 [features]

@@ -4,7 +4,7 @@
 [![MIT / Apache 2.0 licensed](https://img.shields.io/crates/l/sum.svg?maxAge=2592000)](#License)
 [![Build Status](https://dev.azure.com/alecmocatta/sum/_apis/build/status/tests?branchName=master)](https://dev.azure.com/alecmocatta/reqwest_resume/_build?definitionId=12)
 
-[📖 Docs](https://docs.rs/sum/0.1.4) | [💬 Chat](https://constellation.zulipchat.com/#narrow/stream/213236-subprojects)
+[📖 Docs](https://docs.rs/sum/0.1) | [💬 Chat](https://constellation.zulipchat.com/#narrow/stream/213236-subprojects)
 
 General-purpose sum types.
 
