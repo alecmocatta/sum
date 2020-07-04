@@ -26,14 +26,16 @@
 	clippy::type_complexity,
 	clippy::wrong_self_convention,
 	clippy::must_use_candidate,
-	clippy::unsafe_derive_deserialize
+	clippy::unsafe_derive_deserialize,
+	clippy::match_wildcard_for_single_variants
 )]
 
+#[cfg(features = "futures")]
+use futures_core::stream::Stream;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
-
 use std::{
-	error::Error, fmt::{Display, Formatter, Result}, hint::unreachable_unchecked, ops::{Deref, DerefMut}, pin::Pin
+	error::Error, fmt::{Display, Formatter, Result}, future::Future, hint::unreachable_unchecked, ops::{Deref, DerefMut}, pin::Pin, task::{Context, Poll}
 };
 
 macro_rules! impl_sum {
@@ -232,6 +234,36 @@ macro_rules! impl_sum {
 				match *self {
 					$name::$first_t(ref inner) => inner.len(),
 					$($name::$t(ref inner) => inner.len(),)*
+				}
+			}
+		}
+
+		impl<$first_t, $($t,)*> Future for $name<$first_t, $($t,)*>
+		where
+			$first_t: Future,
+			$($t: Future<Output = $first_t::Output>,)*
+		{
+			type Output = <$first_t>::Output;
+
+			fn poll(self: Pin<&mut Self>, cx: &mut Context) -> Poll<Self::Output> {
+				match self.as_pin_mut() {
+					$name::$first_t(inner) => inner.poll(cx),
+					$($name::$t(inner) => inner.poll(cx),)*
+				}
+			}
+		}
+		#[cfg(features = "futures")]
+		impl<$first_t, $($t,)*> Stream for $name<$first_t, $($t,)*>
+		where
+			$first_t: Stream,
+			$($t: Stream<Output = $first_t::Output>,)*
+		{
+			type Item = <$first_t>::Item;
+
+			fn poll_next(self: Pin<&mut Self>, cx: &mut Context) -> Poll<Option<Self::Item>> {
+				match self.as_pin_mut() {
+					$name::$first_t(inner) => inner.poll_next(cx),
+					$($name::$t(inner) => inner.poll_next(cx),)*
 				}
 			}
 		}
