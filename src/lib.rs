@@ -30,7 +30,7 @@
 	clippy::match_wildcard_for_single_variants
 )]
 
-#[cfg(features = "futures")]
+#[cfg(feature = "futures")]
 use futures_core::stream::Stream;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -252,11 +252,11 @@ macro_rules! impl_sum {
 				}
 			}
 		}
-		#[cfg(features = "futures")]
+		#[cfg(feature = "futures")]
 		impl<$first_t, $($t,)*> Stream for $name<$first_t, $($t,)*>
 		where
 			$first_t: Stream,
-			$($t: Stream<Output = $first_t::Output>,)*
+			$($t: Stream<Item = $first_t::Item>,)*
 		{
 			type Item = <$first_t>::Item;
 
