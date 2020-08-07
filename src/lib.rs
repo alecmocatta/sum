@@ -8,7 +8,7 @@
 //!
 //! \* Over up to 32 types.
 
-#![doc(html_root_url = "https://docs.rs/sum/0.1.6")]
+#![doc(html_root_url = "https://docs.rs/sum/0.1.7")]
 #![warn(
 	missing_copy_implementations,
 	missing_debug_implementations,
